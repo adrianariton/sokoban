@@ -61,4 +61,4 @@ def print_map(map: Map, heuristic=sokoban_player_target):
 
     pieces = name.split("\n")
     aligned_corner = reversed(pieces)
-    print("\n".join(aligned_corner))
+    return "\n".join(aligned_corner)

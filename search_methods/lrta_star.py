@@ -36,7 +36,7 @@ class LRTAStar(Solver):
         super().__init__(problem, **kw_args)
 
     def heuristic(self, state: Map):
-        return sokoban_player_seeded_target(state)
+        return sokoban_player_seeded_target(state, verbose=False)
 
     def actions(self, state: Map):
         return [x for x in state.filter_possible_moves() if x <= 4]
@@ -80,7 +80,6 @@ class LRTAStar(Solver):
             if cost < min_cost:
                 min_cost = cost
                 best_action = b
-        # print(f"{best_action=}")
         self.s = s_prime
         self.a = best_action
 
@@ -89,13 +88,13 @@ class LRTAStar(Solver):
     def solve(self):
         m = self.problem.copy()
         moves = []
-        for _ in range(20):
-
+        for _ in range(4):
             m = self.problem.copy()
             moves = []
 
             for i in range(self.max_iter):
-                print(i)
+                with self.logger as log:
+                    log(i)
                 action = self.lrta_agent(m)
                 if action is None:
                     return (0, m, moves), True  # Solved
@@ -103,10 +102,12 @@ class LRTAStar(Solver):
                 m = m.copy()
                 m.apply_move(action)
                 moves.append(action)
-                print("\n\n")
-                print(m)
-                print_map(m, heuristic=self.heuristic)
-                print(f"!!!!!|SCORE={self.heuristic(m)}|\n\n")
-                print(f"{len(moves)=}")
+                with self.logger as log:
+                    log("\n\n")
+                    log(m)
+                    m_print = print_map(m, heuristic=self.heuristic)
+                    log(m_print)
+                    log(f"!!!!!|SCORE={self.heuristic(m)}|\n\n")
+                    log(f"{len(moves)=}")
 
         return (1, m, moves), False  # Failed

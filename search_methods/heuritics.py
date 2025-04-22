@@ -5,6 +5,7 @@ from collections import deque
 from sokoban.map import Map, OBSTACLE_SYMBOL
 from functools import lru_cache
 from itertools import permutations
+from search_methods.Logger import Logger
 
 
 def empty_like(map: list[list[int]]):
@@ -97,10 +98,8 @@ def box_to_targets_bfs(
             cost, (bx, by), (pl_x, pl_y) = heapq.heappop(heap)
             if (bx, by) in targets:
                 added = True
-                # print("done! frate!")
                 min_box_dists.append(((_dx, _dy), cost))
                 break
-            # print(f"{pl_x=}, {pl_y} | {bx=}, {by}")
             if box_block:
                 reachable, player_dists = reachable_positions(
                     sokoban_map, (pl_x, pl_y), blocked | {(bx, by)}
@@ -111,17 +110,13 @@ def box_to_targets_bfs(
             for dx, dy in [(-1, 0), (1, 0), (0, 1), (0, -1)]:
                 nx, ny = bx + dx, by + dy
                 px, py = bx - dx, by - dy
-                # print(f"\t{nx=}, {ny} , {px=}, {py}")
                 if (not is_inbound(sokoban_map, (px, py))) or is_obstacle(sokoban_map, (px, py)):
-                    # print(f"\t- {px}, {py} not inbound!")
                     continue
                 if (not is_inbound(sokoban_map, (nx, ny))) or is_obstacle(sokoban_map, (nx, ny)):
-                    # print(f"\t- {nx}, {ny} not inbound!")
                     continue
                 if (px, py) in blocked or (nx, ny) in blocked:
                     continue
                 if (px, py) not in reachable:
-                    # print(f"\t - {px}, {py} not reachable!")
                     continue
 
                 if (nx, ny) in targets:
@@ -380,7 +375,7 @@ def manhattan_dist(p1, p2):
 
 
 @lru_cache
-def sokoban_player_seeded_target(sokoban_map: Map, verbose=False, seed=None) -> float:
+def sokoban_player_seeded_target(sokoban_map: Map, verbose=False) -> float:
     player_pos = (sokoban_map.player.x, sokoban_map.player.y)
     targets = sokoban_map.targets
     obstacles = sokoban_map.obstacles
@@ -492,11 +487,11 @@ def sokoban_player_seeded_target(sokoban_map: Map, verbose=False, seed=None) -> 
         if sc < _score:
             min_perm = perm
         _score = min(_score, sc)
-
-    print(f"{min_perm=}")
-    box_to_targs = {boxposes[i]: targets[min_perm[i]] for i in box_indices}
-    print(f"{box_to_targs=}")
-    print("\n")
+    if verbose:
+        print(f"{min_perm=}")
+        box_to_targs = {boxposes[i]: targets[min_perm[i]] for i in box_indices}
+        print(f"{box_to_targs=}")
+        print("\n")
     if is_redundant(sokoban_map):
         _score += 2
     return _score
