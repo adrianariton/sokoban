@@ -1,7 +1,7 @@
 import heapq
 import math
 import random
-
+import os
 from search_methods.solver import Solver
 from search_methods.utils import print_map
 from sokoban.map import Map
@@ -34,6 +34,7 @@ class LRTAStar(Solver):
         self.s = None  # previous state
         self.a = None  # previous action
         super().__init__(problem, **kw_args)
+        self.algo_name = "LRTAStar"
 
     def heuristic(self, state: Map):
         return sokoban_player_seeded_target(state, verbose=False)
@@ -86,6 +87,8 @@ class LRTAStar(Solver):
         return best_action
 
     def solve(self):
+        test_name = self.problem.test_name
+        print(f"{test_name=}")
         m = self.problem.copy()
         moves = []
         for _ in range(4):
@@ -97,7 +100,10 @@ class LRTAStar(Solver):
                     log(i)
                 action = self.lrta_agent(m)
                 if action is None:
-                    return (0, m, moves), True  # Solved
+                    obj = (self.heuristic(m), m, moves), True
+
+                    self.logger.pickle(obj, file_name=f"{self.algo_name}/{test_name}_result-ok")
+                    return (self.heuristic(m), m, moves), True  # Solved
 
                 m = m.copy()
                 m.apply_move(action)
@@ -110,4 +116,5 @@ class LRTAStar(Solver):
                     log(f"!!!!!|SCORE={self.heuristic(m)}|\n\n")
                     log(f"{len(moves)=}")
 
-        return (1, m, moves), False  # Failed
+        self.logger.pickle(obj, file_name=f"{test_name}_result-notfinished")
+        return (self.heuristic(m), m, moves), False  # Failed
