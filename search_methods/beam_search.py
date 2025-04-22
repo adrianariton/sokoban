@@ -89,10 +89,10 @@ class BeamSearch(Solver):
     def solve(self):
         test_name = self.map.test_name
         print(f"{self.algo_name=}")
-        obj = "yees"
 
         final, is_ok = self._solve()
         if is_ok:
+            obj = final, is_ok
             self.logger.pickle(obj, file_name=f"{self.algo_name}/{test_name}_result-ok")
             return final, is_ok
         for i in range(40):
