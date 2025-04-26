@@ -41,6 +41,7 @@ class BeamSearch(Solver):
         self.slalom_tolerance = kw_args.get("slalom_tolerance", 5)
         super().__init__(map, **kw_args)
         self.algo_name = f"BeamSearch_K_{self.K}"
+        self.expanded_states = 0
 
     def sample(self, state: Map, pull=False):
         valid_moves = state.filter_possible_moves()
@@ -132,6 +133,7 @@ class BeamSearch(Solver):
                 next_valid_states = [
                     (self.apply_copy(state, move), move) for move in next_valid_moves
                 ]
+                self.expanded_states += 1
                 next_valid_states_scores = [
                     self.score(n_state, moves + [move], old_state=state)
                     for n_state, move in next_valid_states

@@ -29,12 +29,13 @@ KEY_MOVES = 2
 class LRTAStar(Solver):
     def __init__(self, problem: Map, **kw_args):
         self.problem = problem
-        self.result = {}  # result[(s, a)] = s'
-        self.H = {}  # H[s] = heuristic estimate of cost to goal
-        self.s = None  # previous state
-        self.a = None  # previous action
+        self.result = {}
+        self.H = {}
+        self.s = None
+        self.a = None
         super().__init__(problem, **kw_args)
         self.algo_name = "LRTAStar"
+        self.expanded_states = 0
 
     def heuristic(self, state: Map):
         return sokoban_player_seeded_target(state, verbose=False)
@@ -43,12 +44,13 @@ class LRTAStar(Solver):
         return [x for x in state.filter_possible_moves() if x <= 4]
 
     def action_cost(self, s: Map, a, s_prime: Map):
-        return 1  # generic action cost, can be changed if needed
+        return 1
 
     def lrta_cost(self, s: Map, a, s_prime: Map = None):
         if s_prime is None:
             s_prime = s.copy()
             s_prime.apply_move(a)
+            self.expanded_states += 1
         if s_prime not in self.H:
             self.H[s_prime] = self.heuristic(s_prime)
         return self.action_cost(s, a, s_prime) + self.H[s_prime]

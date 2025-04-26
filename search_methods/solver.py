@@ -10,6 +10,7 @@ class Solver:
         self.max_iter = kw_args.get("max_iter", 2000)
         self.logger: Logger = kw_args.get("logger", Logger())
         self.algo_name = "None"
+        self.expanded_states = 0
         random.seed(self.seed)
 
     def solve(self):
