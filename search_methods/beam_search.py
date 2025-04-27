@@ -42,6 +42,7 @@ class BeamSearch(Solver):
         super().__init__(map, **kw_args)
         self.algo_name = f"BeamSearch_K_{self.K}"
         self.expanded_states = 0
+        self.pulls = kw_args.get("pulls", False)
 
     def sample(self, state: Map, pull=False):
         valid_moves = state.filter_possible_moves()
@@ -65,7 +66,7 @@ class BeamSearch(Solver):
         pure_score = sokoban_player_seeded_target(state)
         pull_moves = len(list([move for move in moves if move > DOWN]))
         moves_length = len(moves)
-        return pure_score + move_scr + get_cycling_moves(moves)
+        return pure_score + move_scr + get_cycling_moves(moves) + pull_moves * 5
 
     def compute_probability(self, score: float, temp: float):
         return math.exp(-score / 1000.0 / temp)
@@ -127,7 +128,7 @@ class BeamSearch(Solver):
             is_improvement = False
             candidates = []
             for score, state, moves in queue:
-                next_valid_moves = self.sample(state)
+                next_valid_moves = self.sample(state, pull=self.pulls)
                 if len(next_valid_moves) == 0:
                     continue
                 next_valid_states = [

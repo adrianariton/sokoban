@@ -4,7 +4,7 @@ from sokoban.map import Map
 from sokoban.moves import *
 from sokoban.gif import save_images
 
-ALGO = "LRTAStar"
+ALGO = "BeamSearch_K_20"
 FOLDER_PATH = "logs/" + ALGO
 
 for filename in os.listdir(FOLDER_PATH):
