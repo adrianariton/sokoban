@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import json
 
-ALGORITHMS = ["LRTAStar", "BeamSearch_K_10"]
+ALGORITHMS = ["LRTAStar", "BeamSearch_K_10", "BeamSearch_K_20"]
 TESTS = [
     "easy_map1",
     "easy_map2",
@@ -12,6 +12,7 @@ TESTS = [
     "medium_map2",
     "large_map1",
     "large_map2",
+    "super_hard_map1",
 ]
 
 
@@ -58,6 +59,7 @@ def plot_key(key, title):
 
     plt.plot(TESTS, vals[ALGORITHMS[0]].values(), marker="o", label=f"{ALGORITHMS[0]}")
     plt.plot(TESTS, vals[ALGORITHMS[1]].values(), marker="s", label=f"{ALGORITHMS[1]}")
+    plt.plot(TESTS, vals[ALGORITHMS[2]].values(), marker="s", label=f"{ALGORITHMS[2]}")
 
     # Logarithmic y-axis
     plt.yscale("log")

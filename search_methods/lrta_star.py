@@ -93,7 +93,7 @@ class LRTAStar(Solver):
         print(f"{test_name=}")
         m = self.problem.copy()
         moves = []
-        for _ in range(4):
+        for _ in range(10):
             m = self.problem.copy()
             moves = []
 
